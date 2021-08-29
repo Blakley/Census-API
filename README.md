@@ -1,2 +1,2 @@
-# Census-Web-Scraper
-Fetches US Census data and exports various information to a highly readable excel spreadsheet 
+# 2020 United States Census API
+An unofficial API for various US 2020 census data
