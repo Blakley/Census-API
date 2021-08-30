@@ -1,7 +1,6 @@
 import xpaths
 import states
 
-import csv
 import json
 import pprint
 from time import sleep
@@ -36,7 +35,7 @@ class Census():
 
 		for key in self.states:
 			self.browser.get(self.states[key])
-			sleep(15)
+			sleep(10)
 
 			# populate the current state array with the extracted data
 			self.data_collection['overview'] = self.overview()
@@ -51,7 +50,7 @@ class Census():
 			self.data_collection['race'] = self.race()
 			self.state_data[key] = self.data_collection
 			self.data_collection = {}
-			sleep(3)
+			sleep(2)
 
 		self.write_dictionary()
 			
