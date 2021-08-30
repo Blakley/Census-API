@@ -1,6 +1,7 @@
 import xpaths
 import states
 
+import csv
 import pprint
 from time import sleep
 from selenium import webdriver
@@ -24,7 +25,6 @@ class Census():
 		self.race_data = []
 		self.data_collection = [] # collection of all the data
 		self.state_data = [] # all data from state
-
 		self.navigate()
 
 	def print_data(self):
@@ -83,7 +83,7 @@ class Census():
 			sleep(2)
 
 			i = i + 1
-			if i == 2:
+			if i == 10:
 				break
 			
 		
@@ -299,3 +299,35 @@ class Census():
 
 
 data = Census()
+
+
+
+def test_write_cvs(data):
+	with open('test.csv', mode='a') as file:
+		order = ['name', 'Occupation', 'Income']
+		writer = csv.DictWriter(file, fieldnames=order)
+		writer.writerow(data)
+
+def test_read_cvs():
+	with open('test.csv') as file:
+		keys = ['name', 'Occupation', 'Income']
+		reader = csv.DictReader(file, fieldnames=keys)
+
+		results = []
+		for row in reader:
+			results.append(dict(row))
+		return results
+
+
+def test_csv():
+	t = {'name': 'Ant', 'Occupation': 'Programmer', 'Income': '85k'}
+	t2 = {'name': 'Tom', 'Occupation':  'Electrician', 'Income': '70k'}	
+	t3 = {'name': 'Frank', 'Occupation': 'Wielder', 'Income': '65k'}
+	l = [t, t2, t3]
+
+	for item in l:
+		test_write_cvs(item)
+
+	print(test_read_cvs())
+
+
