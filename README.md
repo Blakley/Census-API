@@ -1,6 +1,8 @@
 # United States 2020 Census API
 An unofficial API for various US 2020 Census data
 
+![census api](https://thumbs.gfycat.com/PartialBlissfulFlyingsquirrel-max-1mb.gif)
+
 ## File Information
 `census.py` 
 Created a [selenium](https://selenium-python.readthedocs.io/) webscraper using the usa 2020 census from [census.gov](census.gov/data)
