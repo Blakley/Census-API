@@ -2,6 +2,7 @@ import xpaths
 import states
 
 import csv
+import json
 import pprint
 from time import sleep
 from selenium import webdriver
@@ -12,36 +13,20 @@ class Census():
 		self.pp = pprint.PrettyPrinter(indent = 4)
 		self.browser = webdriver.Chrome(executable_path=r"chromedriver.exe")
 		
-		# data collection
-		self.overview_data = [] 
-		self.population_data = []
-		self.income_data = []
-		self.education_data = []
-		self.employment_data = []
-		self.housing_data = []
-		self.health_data = []
-		self.economy_data = []
-		self.family_data = []
-		self.race_data = []
-		self.data_collection = [] # collection of all the data
-		self.state_data = [] # all data from state
+		self.data_collection = {} # collection of all the data
+		self.state_data = {} # all data from all states
 		self.navigate()
 
 	def print_data(self):
 		self.pp.pprint(self.state_data)
 
-	def reset_data(self):
-		self.overview_data = [] 
-		self.population_data = []
-		self.income_data = []
-		self.education_data = []
-		self.employment_data = []
-		self.housing_data = []
-		self.health_data = []
-		self.economy_data = []
-		self.family_data = []
-		self.race_data = []
-		self.data_collection = []
+
+	# ------------------------------------
+	#	visits the url for each state
+	# ------------------------------------
+	def write_dictionary(self):
+		with open('census_data.txt', 'w') as convert_file:
+			convert_file.write(json.dumps(self.state_data))
 
 	# ------------------------------------
 	#	visits the url for each state
@@ -49,46 +34,27 @@ class Census():
 	def navigate(self):
 		sleep(3)
 
-		i = 0
 		for key in self.states:
 			self.browser.get(self.states[key])
-			sleep(10)
+			sleep(15)
 
-			# get the data from each section
-			self.overview()
-			self.populations_and_people()
-			self.income_and_poverty()
-			self.education()
-			self.employment()
-			self.housing()
-			self.health()
-			self.economy()
-			self.family()
-			self.race()
-		
 			# populate the current state array with the extracted data
-			self.data_collection.append(self.overview_data)
-			self.data_collection.append(self.population_data)	
-			self.data_collection.append(self.income_data)
-			self.data_collection.append(self.education_data)
-			self.data_collection.append(self.employment_data)
-			self.data_collection.append(self.housing_data)
-			self.data_collection.append(self.health_data)
-			self.data_collection.append(self.economy_data)
-			self.data_collection.append(self.family_data)
-			self.data_collection.append(self.race_data)
-			self.state_data.append(self.data_collection)
-			self.reset_data()
+			self.data_collection['overview'] = self.overview()
+			self.data_collection['population'] = self.populations_and_people()
+			self.data_collection['income'] = self.income_and_poverty()
+			self.data_collection['education'] = self.education()
+			self.data_collection['employment'] = self.employment()
+			self.data_collection['housing'] = self.housing()
+			self.data_collection['health'] = self.health()
+			self.data_collection['economy'] = self.economy()
+			self.data_collection['family'] = self.family()
+			self.data_collection['race'] = self.race()
+			self.state_data[key] = self.data_collection
+			self.data_collection = {}
+			sleep(3)
 
-			sleep(2)
-
-			i = i + 1
-			if i == 10:
-				break
+		self.write_dictionary()
 			
-		
-
-
 	# ------------------------------------
 	#	extracts the xpath data
 	# ------------------------------------
@@ -147,7 +113,7 @@ class Census():
 		data_overview['bachelor_degree_or_higher'] = self.helper('bachelor_degree_or_higher', 'overview')
 		data_overview['without_health_care_coverage'] = self.helper('without_health_care_coverage', 'overview')
 		data_overview['total_employer_establishments'] = self.helper('total_employer_establishments', 'overview')
-		self.overview_data.append(data_overview)
+		return data_overview
 		
 
 	# ------------------------------------
@@ -169,7 +135,7 @@ class Census():
 		data_overview['Foreign Born population'] = self.helper('Foreign Born population', 'population')
 		data_overview['Moved From a Different State in the Last Year'] = self.helper('Moved From a Different State in the Last Year', 'population')
 		data_overview['Veterans in State'] = self.helper('Veterans in State', 'population')
-		self.population_data.append(data_overview)
+		return data_overview
 
 
 	# ------------------------------------
@@ -183,7 +149,7 @@ class Census():
 		
 		data_overview['Median Household Income'] = self.helper('Median Household Income', 'income')
 		data_overview['Number of people in poverty'] = self.helper('Number of people in poverty', 'income')
-		self.income_data.append(data_overview)
+		return data_overview
 
 
 	# ------------------------------------
@@ -195,7 +161,7 @@ class Census():
 		} 
 
 		data_overview['Bachelors or Higher'] = self.helper('Bachelors or Higher', 'education')
-		self.education_data.append(data_overview)
+		return data_overview
 
 
 	# ------------------------------------
@@ -209,7 +175,7 @@ class Census():
 
 		data_overview['Employment Rate'] = self.helper('Employment Rate', 'employment')
 		data_overview['Mean Hours Working'] = self.helper('Mean Hours Working', 'employment')
-		self.employment_data.append(data_overview)
+		return data_overview
 
 
 	# ------------------------------------
@@ -225,7 +191,7 @@ class Census():
 		data_overview['Median Gross Rent'] = self.helper('Median Gross Rent', 'housing')
 		data_overview['Homeownership Rate'] = self.helper('Homeownership Rate', 'housing')
 		data_overview['Total Housing Units'] = self.helper('Total Housing Units', 'housing')
-		self.housing_data.append(data_overview)
+		return data_overview
 
 
 	# ------------------------------------
@@ -239,7 +205,7 @@ class Census():
 
 		data_overview['Disabled Population'] = self.helper('Disabled Population', 'health')
 		data_overview['Without Health Care Coverage'] = self.helper('Without Health Care Coverage', 'health')
-		self.health_data.append(data_overview)
+		return data_overview
 
 
 	# ------------------------------------
@@ -255,7 +221,7 @@ class Census():
 		data_overview['Total Annual Payroll'] = self.helper('Total Annual Payroll', 'economy')
 		data_overview['Total Retail Sales'] = self.helper('Total Retail Sales', 'economy')
 		data_overview['Total Employer Establishments'] = self.helper('Total Employer Establishments', 'economy')		
-		self.economy_data.append(data_overview)
+		return data_overview
 
 
 	# ------------------------------------
@@ -269,7 +235,7 @@ class Census():
 
 		data_overview['Average Family Size'] = self.helper('Average Family Size', 'family')
 		data_overview['Never Married'] = self.helper('Never Married', 'family')
-		self.family_data.append(data_overview)
+		return data_overview
 
 
 	# ------------------------------------
@@ -295,39 +261,8 @@ class Census():
 		data_overview['Some Other Race'] = self.helper('Some Other Race', 'race')
 		data_overview['Native Hawaiian and Pacific Islander'] = self.helper('Native Hawaiian and Pacific Islander', 'race')
 		data_overview['White'] = self.helper('White', 'race')
-		self.race_data.append(data_overview)
+		return data_overview
 
 
+# run
 data = Census()
-
-
-
-def test_write_cvs(data):
-	with open('test.csv', mode='a') as file:
-		order = ['name', 'Occupation', 'Income']
-		writer = csv.DictWriter(file, fieldnames=order)
-		writer.writerow(data)
-
-def test_read_cvs():
-	with open('test.csv') as file:
-		keys = ['name', 'Occupation', 'Income']
-		reader = csv.DictReader(file, fieldnames=keys)
-
-		results = []
-		for row in reader:
-			results.append(dict(row))
-		return results
-
-
-def test_csv():
-	t = {'name': 'Ant', 'Occupation': 'Programmer', 'Income': '85k'}
-	t2 = {'name': 'Tom', 'Occupation':  'Electrician', 'Income': '70k'}	
-	t3 = {'name': 'Frank', 'Occupation': 'Wielder', 'Income': '65k'}
-	l = [t, t2, t3]
-
-	for item in l:
-		test_write_cvs(item)
-
-	print(test_read_cvs())
-
-
