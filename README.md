@@ -1,19 +1,25 @@
 # United States 2020 Census API
 An unofficial API for various US 2020 Census data
 
-## Description
+## File Information
 `census.py` 
-Created a [selenium](https://selenium-python.readthedocs.io/) webscraper for [census.gov](census.gov/data) that extracted the usa 2020 census.
+Created a [selenium](https://selenium-python.readthedocs.io/) webscraper using the usa 2020 census from [census.gov](census.gov/data)
 
 `census_dictionary.py`
-Holds a python dictionary of the extracted census values for each state
+A python dictionary of the extracted census values for each state
 
 `server.py`
-creates a local API on localhost:5000
+Created a local API on `localhost:5000` for accessing the data for each state 
+
+`states.py`
+A list of urls for each state on [census.gov](census.gov/data)
+
+`xpaths.py`
+xpath values for various elements used for accessing data on the census webpage
 
 ## Routes
 API routes where `name` is the name of a state.
-Note, the first letter must be capitalized. Example: Alabama
+Note: the first letter must be capitalized. Example: Alabama
 
 * return all the data for the state: `/state?=name` 
 * get an overview of data for the state `/overview?=name`
